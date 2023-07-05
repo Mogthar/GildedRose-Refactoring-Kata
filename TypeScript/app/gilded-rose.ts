@@ -17,7 +17,7 @@ export class GildedRose {
   constructor(items = [] as Array<Item>) {
     this.CheckItemInput(items);
     this.items = items;
-    this.specialItems = ['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert', 'Sulfuras, Hand of Ragnaros']
+    this.specialItems = ['Aged Brie', 'Backstage passes to a TAFKAL80ETC concert', 'Sulfuras, Hand of Ragnaros', 'Conjured Mana Cake']
   }
 
   // TODO
@@ -68,11 +68,32 @@ export class GildedRose {
             this.items[i].quality = 50;
           }
         }
+
+        // handle conjured manacake
+        if(this.items[i].name == 'Conjured Mana Cake')
+        {
+          // decrement sellin date and decrease quality at twice the rate
+          this.items[i].sellIn -= 1;
+          if(this.items[i].sellIn >= 0)
+          {
+            this.items[i].quality -= 2;
+          }
+          else
+          {
+            this.items[i].quality -= 4;
+          }
+
+          // cap quality at 0
+          if(this.items[i].quality < 0)
+          {
+            this.items[i].quality = 0;
+          }
+        }
         
         // note that sulfuras doesnt need any handling. It is perceived through time as it should
       }
 
-      // normal cases
+      // normal 'generic item' cases
       else
       {
         // decrement sellin date
@@ -120,6 +141,19 @@ export class GildedRose {
         if(inputItems[i].sellIn < 0 && inputItems[i].quality != 0)
         {
           throw 'Tickets are worthless after the concert';
+        }
+        else if(inputItems[i].quality < 0 || inputItems[i].quality > 50)
+        {
+          throw 'An item has to a have a non-negative quality less than or equal to 50';
+        }
+      }
+
+      // check conjure mana cake
+      else if(inputItems[i].name == 'Conjured Mana Cake')
+      {
+        if(inputItems[i].quality < 0 || inputItems[i].quality > 50)
+        {
+          throw 'An item has to a have a non-negative quality less than or equal to 50';
         }
       }
 
